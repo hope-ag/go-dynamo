@@ -3,7 +3,6 @@ package product
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -31,7 +30,6 @@ func (p *Product) TableName() string {
 }
 
 func (p *Product) GetMap() map[string]any {
-	fmt.Println(p.CreatedAt, p.UpdatedAt, p.CreatedAt.Format(entities.GetTimeFormat()))
 	return map[string]any{
 		"_id":       p.ID.String(),
 		"name":      p.Name,
@@ -69,7 +67,6 @@ func ParseDynamoAttributeToStruct(attribute map[string]*dynamodb.AttributeValue)
 			p.CreatedAt, err = time.Parse(entities.GetTimeFormat(), *value.S)
 		}
 		if key == "updatedAt" {
-			fmt.Println(value.S)
 			p.UpdatedAt, err = time.Parse(entities.GetTimeFormat(), *value.S)
 		}
 		if err != nil {

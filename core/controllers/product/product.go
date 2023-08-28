@@ -1,7 +1,6 @@
 package product
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
@@ -76,7 +75,6 @@ func (c *Controller) Update(id uuid.UUID, product *product.Product) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(product)
 	found.ID = product.ID
 	found.Name = product.Name
 	found.UpdatedAt = time.Now()

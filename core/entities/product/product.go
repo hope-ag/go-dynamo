@@ -68,7 +68,7 @@ func ParseDynamoAttributeToStruct(attribute map[string]*dynamodb.AttributeValue)
 		if key == "createdAt" {
 			p.CreatedAt, err = time.Parse(entities.GetTimeFormat(), *value.S)
 		}
-		if key == "updatedAT" {
+		if key == "updatedAt" {
 			fmt.Println(value.S)
 			p.UpdatedAt, err = time.Parse(entities.GetTimeFormat(), *value.S)
 		}

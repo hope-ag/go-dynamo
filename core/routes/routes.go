@@ -41,7 +41,7 @@ func (r *Router) setConfigRouters() *chi.Mux {
 
 func (r *Router) RouterHealth(repository adapter.Interface) {
 	handler := HealthHandler.NewHandler(repository)
-	r.router.Route("/health", func (route chi.Router) {
+	r.router.Route("/health", func(route chi.Router) {
 		route.Post("/", handler.Post)
 		route.Get("/", handler.Get)
 		route.Put("/", handler.Put)
@@ -51,7 +51,7 @@ func (r *Router) RouterHealth(repository adapter.Interface) {
 }
 func (r *Router) RouterProduct(repository adapter.Interface) {
 	handler := ProductHandler.NewHandler(repository)
-	r.router.Route("/products", func (route chi.Router) {
+	r.router.Route("/products", func(route chi.Router) {
 		route.Get("/", handler.Get)
 		route.Get("/{ID}", handler.Get)
 		route.Post("/", handler.Post)
@@ -60,7 +60,7 @@ func (r *Router) RouterProduct(repository adapter.Interface) {
 		route.Options("/", handler.Options)
 	})
 }
-func (r *Router) EnableCors() * Router  {
+func (r *Router) EnableCors() *Router {
 	r.router.Use(r.config.Cors)
 	return r
 }
@@ -70,22 +70,22 @@ func (r *Router) EnableLogger() *Router {
 	return r
 }
 
-func (r *Router) EnableTimeout() * Router {
+func (r *Router) EnableTimeout() *Router {
 	r.router.Use(middleware.Timeout(r.config.GetTimeout()))
 	return r
 }
 
-func (r *Router) EnableRecovery() * Router  {
+func (r *Router) EnableRecovery() *Router {
 	r.router.Use(middleware.Recoverer)
 	return r
 }
 
-func (r *Router) EnableRequestId() * Router  {
+func (r *Router) EnableRequestId() *Router {
 	r.router.Use(middleware.RequestID)
 	return r
 }
 
-func (r *Router) EnableRequestIP() * Router  {
+func (r *Router) EnableRequestIP() *Router {
 	r.router.Use(middleware.RealIP)
 	return r
 }

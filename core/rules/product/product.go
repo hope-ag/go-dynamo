@@ -16,7 +16,7 @@ import (
 	"github.com/hope-ag/go-dynamo/core/entities/product"
 )
 
-type Rules struct {}
+type Rules struct{}
 
 func NewRules() *Rules {
 	return &Rules{}
@@ -30,9 +30,9 @@ func (r *Rules) ConvertIoReaderToStruct(body io.Reader, model any) (any, error) 
 }
 
 func (r *Rules) GetMock() any {
-	return product.Product {
+	return product.Product{
 		Base: entities.Base{
-			ID: uuid.New(),
+			ID:        uuid.New(),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -41,12 +41,12 @@ func (r *Rules) GetMock() any {
 }
 
 func (r *Rules) Validate(model any) error {
-	productModel,err := product.InterfaceToModel(model)
+	productModel, err := product.InterfaceToModel(model)
 
 	if err != nil {
 		return err
 	}
-	return validation.ValidateStruct(productModel, 
+	return validation.ValidateStruct(productModel,
 		validation.Field(&productModel.ID, validation.Required, is.UUIDv4),
 		validation.Field(&productModel.Name, validation.Required, validation.Length(3, 50)),
 	)
@@ -69,16 +69,16 @@ func (r *Rules) createTable(connection *dynamodb.DynamoDB) error {
 		KeySchema: []*dynamodb.KeySchemaElement{
 			{
 				AttributeName: aws.String("_id"),
-				KeyType: aws.String("HASH"),
+				KeyType:       aws.String("HASH"),
 			},
 		},
 		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-			ReadCapacityUnits: aws.Int64(10),
+			ReadCapacityUnits:  aws.Int64(10),
 			WriteCapacityUnits: aws.Int64(10),
 		},
 		TableName: aws.String(table.TableName()),
 	}
-	response,err := connection.CreateTable(input)
+	response, err := connection.CreateTable(input)
 	if err != nil && strings.Contains(err.Error(), "Table already exists") {
 		return nil
 	}

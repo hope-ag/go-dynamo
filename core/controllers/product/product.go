@@ -12,8 +12,8 @@ import (
 
 type Interface interface {
 	Create(body *product.Product) (uuid.UUID, error)
-	ListAll()([]product.Product, error)
-	ListOne(id uuid.UUID)(product.Product, error)
+	ListAll() ([]product.Product, error)
+	ListOne(id uuid.UUID) (product.Product, error)
 	Update(id uuid.UUID, product *product.Product) error
 	Delete(id uuid.UUID) error
 }
@@ -27,7 +27,6 @@ func NewController(repository adapter.Interface) Interface {
 		repository: repository,
 	}
 }
-
 
 func (c *Controller) ListOne(id uuid.UUID) (product.Product, error) {
 	entity := product.Product{}
@@ -44,7 +43,7 @@ func (c *Controller) ListAll() ([]product.Product, error) {
 	var entity product.Product
 
 	filter := expression.Name("name").NotEqual(expression.Value(""))
-	condition,err := expression.NewBuilder().WithFilter(filter).Build()
+	condition, err := expression.NewBuilder().WithFilter(filter).Build()
 	if err != nil {
 		return entities, err
 	}
@@ -52,15 +51,15 @@ func (c *Controller) ListAll() ([]product.Product, error) {
 	if err != nil {
 		return entities, err
 	}
-	if (response != nil) {
-		for _,value := range response.Items {
+	if response != nil {
+		for _, value := range response.Items {
 			entity, err := product.ParseDynamoAttributeToStruct(value)
-			if (err != nil) {
+			if err != nil {
 				return entities, err
 			}
 			entities = append(entities, entity)
 		}
-	} 
+	}
 	return entities, nil
 }
 
@@ -68,12 +67,12 @@ func (c *Controller) Create(entity *product.Product) (uuid.UUID, error) {
 	entity.SetCreatedAt()
 	entity.GenerateID()
 	entity.SetUpdatedAt()
-	_,err := c.repository.CreateOrUpdate(entity.GetMap(), entity.TableName())
+	_, err := c.repository.CreateOrUpdate(entity.GetMap(), entity.TableName())
 	return entity.ID, err
 }
 
 func (c *Controller) Update(id uuid.UUID, product *product.Product) error {
-	found,err := c.ListOne(id)
+	found, err := c.ListOne(id)
 	if err != nil {
 		return err
 	}
@@ -81,15 +80,15 @@ func (c *Controller) Update(id uuid.UUID, product *product.Product) error {
 	found.ID = product.ID
 	found.Name = product.Name
 	found.UpdatedAt = time.Now()
-	_,err = c.repository.CreateOrUpdate(found.GetMap(), product.TableName())
+	_, err = c.repository.CreateOrUpdate(found.GetMap(), product.TableName())
 	return err
 }
 
 func (c *Controller) Delete(id uuid.UUID) error {
-	entity,err := c.ListOne(id)
+	entity, err := c.ListOne(id)
 	if err != nil {
 		return err
 	}
-	_,err = c.repository.Delete(entity.GetFilterId(), entity.TableName())
+	_, err = c.repository.Delete(entity.GetFilterId(), entity.TableName())
 	return err
 }

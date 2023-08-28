@@ -19,17 +19,17 @@ import (
 type Handler struct {
 	handlers.Interface
 	Controller product.Interface
-	Rules rules.Interface
+	Rules      rules.Interface
 }
 
 func NewHandler(repository adapter.Interface) handlers.Interface {
- return &Handler{
-	Controller: product.NewController(repository),
-	Rules: RulesProduct.NewRules(),
- }
+	return &Handler{
+		Controller: product.NewController(repository),
+		Rules:      RulesProduct.NewRules(),
+	}
 }
 
-func (h *Handler) Get (w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	if chi.URLParam(r, "ID") != "" {
 		h.getOne(w, r)
 	} else {
@@ -37,14 +37,13 @@ func (h *Handler) Get (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
-func (h *Handler) getOne (w http.ResponseWriter, r *http.Request) {
-	ID,err := uuid.Parse(chi.URLParam(r, "ID"))
+func (h *Handler) getOne(w http.ResponseWriter, r *http.Request) {
+	ID, err := uuid.Parse(chi.URLParam(r, "ID"))
 	if err != nil {
 		request.SendErrorResponse(w, r, errors.New("invalid ID"), 401)
 		return
 	}
-	res,err := h.Controller.ListOne(ID)
+	res, err := h.Controller.ListOne(ID)
 	if err != nil {
 		request.SendInternalError(w, r, err)
 		return
@@ -52,8 +51,8 @@ func (h *Handler) getOne (w http.ResponseWriter, r *http.Request) {
 	request.SendSuccessResponse(w, r, res)
 }
 
-func (h *Handler) getAll (w http.ResponseWriter, r *http.Request) {
-	res,err := h.Controller.ListAll()
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	res, err := h.Controller.ListAll()
 	if err != nil {
 		request.SendInternalError(w, r, err)
 		return
@@ -61,13 +60,13 @@ func (h *Handler) getAll (w http.ResponseWriter, r *http.Request) {
 	request.SendSuccessResponse(w, r, res)
 }
 
-func (h *Handler) Put (w http.ResponseWriter, r *http.Request) {
-	ID,err := uuid.Parse(chi.URLParam(r, "ID"))
+func (h *Handler) Put(w http.ResponseWriter, r *http.Request) {
+	ID, err := uuid.Parse(chi.URLParam(r, "ID"))
 	if err != nil {
 		request.SendBadRequest(w, r, errors.New("invalid id"))
 		return
 	}
-	productBody,err := h.getBodyAndValidate(r, ID);
+	productBody, err := h.getBodyAndValidate(r, ID)
 
 	if err != nil {
 		request.SendBadRequest(w, r, err)
@@ -78,16 +77,16 @@ func (h *Handler) Put (w http.ResponseWriter, r *http.Request) {
 		request.SendInternalError(w, r, err)
 		return
 	}
-	request.SendNoContentSuccessResponse(w,r)
+	request.SendNoContentSuccessResponse(w, r)
 }
 
-func (h *Handler) Post (w http.ResponseWriter, r *http.Request) {
-	productBody,err := h.getBodyAndValidate(r, uuid.Nil)
+func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
+	productBody, err := h.getBodyAndValidate(r, uuid.Nil)
 	if err != nil {
 		request.SendBadRequest(w, r, err)
 		return
 	}
-	ID,err := h.Controller.Create(productBody)
+	ID, err := h.Controller.Create(productBody)
 	if err != nil {
 		request.SendErrorResponse(w, r, err, http.StatusInternalServerError)
 		return
@@ -95,8 +94,8 @@ func (h *Handler) Post (w http.ResponseWriter, r *http.Request) {
 	request.SendSuccessResponse(w, r, map[string]any{"id": ID.String()})
 }
 
-func (h *Handler) Delete (w http.ResponseWriter, r *http.Request) {
-	ID,err := uuid.Parse(chi.URLParam(r, "ID"))
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	ID, err := uuid.Parse(chi.URLParam(r, "ID"))
 	if err != nil {
 		request.SendBadRequest(w, r, errors.New("invalid ID"))
 		return
@@ -108,20 +107,18 @@ func (h *Handler) Delete (w http.ResponseWriter, r *http.Request) {
 	request.SendNoContentSuccessResponse(w, r)
 }
 
-func (h *Handler) Patch (w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) Patch(w http.ResponseWriter, r *http.Request) {}
 
-func (h *Handler) Options (w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {}
 
-func (h *Handler) getBodyAndValidate (r *http.Request, ID uuid.UUID) (*EntityProduct.Product, error) {
-	productBody := &EntityProduct.Product {
-
-	}
-	body,err := h.Rules.ConvertIoReaderToStruct(r.Body, productBody)
+func (h *Handler) getBodyAndValidate(r *http.Request, ID uuid.UUID) (*EntityProduct.Product, error) {
+	productBody := &EntityProduct.Product{}
+	body, err := h.Rules.ConvertIoReaderToStruct(r.Body, productBody)
 	if err != nil {
 		return &EntityProduct.Product{}, err
 	}
 
-	productParsed,err := EntityProduct.InterfaceToModel(body)
+	productParsed, err := EntityProduct.InterfaceToModel(body)
 	if err != nil {
 		return &EntityProduct.Product{}, err
 	}

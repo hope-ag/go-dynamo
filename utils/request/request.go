@@ -7,26 +7,26 @@ import (
 )
 
 type Response struct {
-	Status int `json:"status"`
-	Data interface {} `json:"data"`
+	Status int         `json:"status"`
+	Data   interface{} `json:"data"`
 }
 
 func newResponse(data any, status int, success bool) *Response {
-	payload := map[string]any {}
+	payload := map[string]any{}
 	if success {
 		payload["success"] = true
 	} else {
 		payload["success"] = false
 	}
 	payload["data"] = data
-	return &Response {
+	return &Response{
 		status,
 		payload,
 	}
 }
 
 func (res *Response) bytes() []byte {
-	data,_ := json.Marshal(res.Data)
+	data, _ := json.Marshal(res.Data)
 	return data
 }
 
@@ -38,7 +38,7 @@ func (res *Response) sendResponse(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(res.Status)
-	_,_ = w.Write(res.bytes())
+	_, _ = w.Write(res.bytes())
 	log.Println(res.string())
 }
 
@@ -61,7 +61,7 @@ func SendNoContentSuccessResponse(w http.ResponseWriter, r *http.Request) {
 
 func SendErrorResponse(w http.ResponseWriter, r *http.Request, err error, status int) {
 	var s int
-	data := map[string] any { "error": err.Error()}
+	data := map[string]any{"error": err.Error()}
 	if status == 0 {
 		s = http.StatusInternalServerError
 	} else {
@@ -71,11 +71,11 @@ func SendErrorResponse(w http.ResponseWriter, r *http.Request, err error, status
 }
 
 func SendBadRequest(w http.ResponseWriter, r *http.Request, err error) {
-	data := map[string] any { "error": err.Error()}
+	data := map[string]any{"error": err.Error()}
 	newResponse(data, http.StatusBadRequest, false).sendResponse(w, r)
 }
 
 func SendInternalError(w http.ResponseWriter, r *http.Request, err error) {
-	data := map[string] any { "error": err.Error()}
+	data := map[string]any{"error": err.Error()}
 	newResponse(data, http.StatusInternalServerError, false).sendResponse(w, r)
 }

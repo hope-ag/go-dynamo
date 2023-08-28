@@ -1,9 +1,9 @@
 package routes
 
 import (
+	"github.com/go-chi/cors"
 	"net/http"
 	"time"
-	"github.com/go-chi/cors"
 )
 
 type Config struct {
@@ -14,13 +14,13 @@ func NewConfig(timeInSeconds int) *Config {
 	return &Config{}
 }
 
-func (c * Config) Cors(next http.Handler) http.Handler {
+func (c *Config) Cors(next http.Handler) http.Handler {
 	return cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"*"},
-		AllowedHeaders: []string{"*"},
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"*"},
+		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
-		MaxAge: 5,
+		MaxAge:           5,
 	}).Handler(next)
 }
 

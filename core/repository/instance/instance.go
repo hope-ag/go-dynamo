@@ -6,6 +6,6 @@ import (
 )
 
 func GetConnection() *dynamodb.DynamoDB {
-	s:= session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
+	s := session.Must(session.NewSessionWithOptions(session.Options{SharedConfigState: session.SharedConfigEnable}))
 	return dynamodb.New(s)
 }

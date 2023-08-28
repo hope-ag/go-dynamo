@@ -11,14 +11,14 @@ type Interface interface {
 	SetCreatedAt()
 	SetUpdatedAt()
 	TableName() string
-	GetMap() map[string] any
-	GetFilterId() map[string] any
+	GetMap() map[string]any
+	GetFilterId() map[string]any
 }
 
 type Base struct {
-	ID					uuid.UUID		`json:"_id"`
-	CreatedAt		time.Time		`json:"createdAt"`
-	UpdatedAt		time.Time		`json:"updatedAt"`
+	ID        uuid.UUID `json:"_id"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func (b *Base) GenerateID() {

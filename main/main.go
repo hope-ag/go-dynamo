@@ -10,8 +10,8 @@ import (
 	"github.com/hope-ag/go-dynamo/core/repository/adapter"
 	"github.com/hope-ag/go-dynamo/core/repository/instance"
 	"github.com/hope-ag/go-dynamo/core/routes"
-	RulesProduct "github.com/hope-ag/go-dynamo/core/rules/product"
 	"github.com/hope-ag/go-dynamo/core/rules"
+	RulesProduct "github.com/hope-ag/go-dynamo/core/rules/product"
 	"github.com/hope-ag/go-dynamo/utils/env"
 	"github.com/hope-ag/go-dynamo/utils/logger"
 )
@@ -52,7 +52,7 @@ func Migrate(connection *dynamodb.DynamoDB) []error {
 
 func callMigrateAndAppendErrors(errors *[]error, connection *dynamodb.DynamoDB, rule rules.Interface) {
 	err := rule.Migrate(connection)
-	if (err != nil) {
+	if err != nil {
 		*errors = append(*errors, err)
 	}
 }
@@ -63,10 +63,10 @@ func CheckTables(connection *dynamodb.DynamoDB) error {
 	if err != nil {
 		return err
 	}
-	if (len(response.TableNames) == 0) {
+	if len(response.TableNames) == 0 {
 		logger.INFO("No tables found", nil)
 	} else {
-		for _,name := range response.TableNames {
+		for _, name := range response.TableNames {
 			logger.INFO("Table Name: ", *name)
 		}
 	}

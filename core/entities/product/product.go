@@ -18,7 +18,7 @@ type Product struct {
 
 func InterfaceToModel(data any) (*Product, error) {
 	instance := Product{}
-	bytes,err := json.Marshal(data)
+	bytes, err := json.Marshal(data)
 
 	if err != nil {
 		return &instance, err
@@ -30,18 +30,18 @@ func (p *Product) TableName() string {
 	return "products"
 }
 
-func (p *Product) GetMap() map[string] any {
+func (p *Product) GetMap() map[string]any {
 	fmt.Println(p.CreatedAt, p.UpdatedAt, p.CreatedAt.Format(entities.GetTimeFormat()))
-	return map[string]any {
-		"_id": p.ID.String(),
-		"name": p.Name,
+	return map[string]any{
+		"_id":       p.ID.String(),
+		"name":      p.Name,
 		"createdAt": p.CreatedAt.Format(entities.GetTimeFormat()),
 		"updatedAt": p.UpdatedAt.Format(entities.GetTimeFormat()),
 	}
 }
 
-func (p *Product) GetFilterId() map[string] any {
-	return map[string] any { "_id": p.ID.String() }
+func (p *Product) GetFilterId() map[string]any {
+	return map[string]any{"_id": p.ID.String()}
 }
 
 func (p *Product) Bytes() ([]byte, error) {
@@ -55,7 +55,7 @@ func ParseDynamoAttributeToStruct(attribute map[string]*dynamodb.AttributeValue)
 		return p, errors.New("item not found")
 	}
 
-	for key,value := range attribute {
+	for key, value := range attribute {
 		if key == "_id" {
 			p.ID, err = uuid.Parse(*value.S)
 			if p.ID == uuid.Nil {

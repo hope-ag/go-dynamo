@@ -1,10 +1,6 @@
 package config
 
-import (
-	"strconv"
-	"github.com/spf13/viper"
-	"github.com/hope-ag/go-dynamo/utils/env"
-)
+import "github.com/spf13/viper"
 
 type Config struct {
 	Port, Timeout int

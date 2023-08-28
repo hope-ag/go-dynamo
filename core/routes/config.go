@@ -10,7 +10,7 @@ type Config struct {
 	timeout time.Duration
 }
 
-func NewTConfig(timeInSeconds int) *Config {
+func NewConfig(timeInSeconds int) *Config {
 	return &Config{}
 }
 
@@ -29,6 +29,6 @@ func (c *Config) SetTimeout(timeInSeconds int) *Config {
 	return c
 }
 
-func (c *Config) GetTimeout(timeInSeconds int) time.Duration {
+func (c *Config) GetTimeout() time.Duration {
 	return c.timeout
 }

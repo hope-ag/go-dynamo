@@ -20,7 +20,7 @@ type Interface interface {
 	Delete(entity map[string] any, tableName string) (*dynamodb.DeleteItemOutput, error)
 }
 
-func NewAdapter(con *dynamodb.DynamoDB) *Database {
+func NewAdapter(con *dynamodb.DynamoDB) Interface {
 	return & Database {
 		connection: con,
 		logMode: false,
@@ -41,7 +41,7 @@ func (db *Database) FindAll(condition expression.Expression, tableName string) (
 		ProjectionExpression: condition.Projection(),
 		TableName: aws.String(tableName),
 	}
-	
+	return db.connection.Scan(input)
 }
 
 func (db *Database) FindOne(condition map[string]any, tableName string) (*dynamodb.GetItemOutput, error) {

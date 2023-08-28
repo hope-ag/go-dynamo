@@ -1,4 +1,4 @@
-package http
+package request
 
 import (
 	"encoding/json"
@@ -11,10 +11,17 @@ type Response struct {
 	Data interface {} `json:"data"`
 }
 
-func newResponse(data any, status int) *Response {
+func newResponse(data any, status int, success bool) *Response {
+	payload := map[string]any {}
+	if success {
+		payload["success"] = true
+	} else {
+		payload["success"] = false
+	}
+	payload["data"] = data
 	return &Response {
 		status,
-		data,
+		payload,
 	}
 }
 
@@ -42,11 +49,14 @@ func SendSuccessResponse(w http.ResponseWriter, r *http.Request, data any) {
 	} else {
 		status = http.StatusOK
 	}
-	newResponse(data, status).sendResponse(w, r)
+	newResponse(data, status, true).sendResponse(w, r)
 }
 
 func SendSuccessResponseWithStatus(w http.ResponseWriter, r *http.Request, data any, status int) {
-	newResponse(data, status).sendResponse(w, r)
+	newResponse(data, status, true).sendResponse(w, r)
+}
+func SendNoContentSuccessResponse(w http.ResponseWriter, r *http.Request) {
+	newResponse(nil, http.StatusNoContent, true).sendResponse(w, r)
 }
 
 func SendErrorResponse(w http.ResponseWriter, r *http.Request, err error, status int) {
@@ -57,6 +67,15 @@ func SendErrorResponse(w http.ResponseWriter, r *http.Request, err error, status
 	} else {
 		s = status
 	}
+	newResponse(data, s, false).sendResponse(w, r)
+}
 
-	newResponse(data, s).sendResponse(w, r)
+func SendBadRequest(w http.ResponseWriter, r *http.Request, err error) {
+	data := map[string] any { "error": err.Error()}
+	newResponse(data, http.StatusBadRequest, false).sendResponse(w, r)
+}
+
+func SendInternalError(w http.ResponseWriter, r *http.Request, err error) {
+	data := map[string] any { "error": err.Error()}
+	newResponse(data, http.StatusInternalServerError, false).sendResponse(w, r)
 }

@@ -16,12 +16,12 @@ type Router struct {
 
 func NewRouter() *Router {
 	return &Router{
-		config: NewTConfig().SetTimeout(serviceConfig.GetConfig().Timeout),
+		config: NewConfig(ServerConfig.GetConfig().Timeout),
 		router: chi.NewRouter(),
 	}
 }
 
-func (r *Router) SetRouters(repository *adapter.Interface) *chi.Mux {
+func (r *Router) SetRouters(repository adapter.Interface) *chi.Mux {
 	r.setConfigRouters()
 	r.RouterHealth(repository)
 	r.RouterProduct(repository)
@@ -36,23 +36,25 @@ func (r *Router) setConfigRouters() *chi.Mux {
 	r.EnableRequestId()
 	r.EnableRequestIP()
 	r.EnableRequestId()
+	return r.router
 }
 
-func (r *Router) RouterHealth(repository *adapter.Interface) {
+func (r *Router) RouterHealth(repository adapter.Interface) {
 	handler := HealthHandler.NewHandler(repository)
 	r.router.Route("/health", func (route chi.Router) {
 		route.Post("/", handler.Post)
 		route.Get("/", handler.Get)
 		route.Put("/", handler.Put)
 		route.Delete("/", handler.Delete)
-		route.Options("/", handler.options)
+		route.Options("/", handler.Options)
 	})
 }
-func (r *Router) RouterProduct(repository *adapter.Interface) {
+func (r *Router) RouterProduct(repository adapter.Interface) {
 	handler := ProductHandler.NewHandler(repository)
-	r.router.Route("/product", func (route chi.Router) {
+	r.router.Route("/products", func (route chi.Router) {
 		route.Get("/", handler.Get)
-		route.Post("/", handler.post)
+		route.Get("/{ID}", handler.Get)
+		route.Post("/", handler.Post)
 		route.Put("/{ID}", handler.Put)
 		route.Delete("/{ID}", handler.Delete)
 		route.Options("/", handler.Options)
